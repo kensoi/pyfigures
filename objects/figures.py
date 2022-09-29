@@ -1,4 +1,4 @@
-from cmath import acos, pi
+from math import acos, pi
 from .types import Point, Figure
 
 
@@ -32,7 +32,7 @@ def get_vect_angle(v1: Vector, v2: Vector):
     lens = v1.get_len() * v2.get_len()
     angle = poss / lens
 
-    return acos(angle) / pi * 90 % pi
+    return acos(angle) / pi * 90 * 2 // 0.0000001 / 10000000
 
 
 class Triangle(Figure):

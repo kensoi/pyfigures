@@ -52,18 +52,21 @@ def create_rect() -> Rectangular:
     BC = Vector(B, C)
     CD = Vector(C, D)
     DA = Vector(D, A)
+    e = get_vect_angle(AB, BC)
+    ee = get_vect_angle(BC, CD)
+    eee = get_vect_angle(CD, DA)
+    eeee = get_vect_angle(AB, DA)
+    if e != 90:
+        raise Exception(a + f"; {e=}")
 
-    if get_vect_angle(AB, BC) != 90:
-        raise Exception(a)
-
-    if get_vect_angle(BC, CD) != 90:
-        raise Exception(a)
+    if ee != 90:
+        raise Exception(a + f"; {ee=}")
     
-    if get_vect_angle(CD, DA) != 90:
-        raise Exception(a)
+    if eee != 90:
+        raise Exception(a + f"; {eee=}")
 
-    if get_vect_angle(AB, DA) != 90:
-        raise Exception(a)
+    if eeee != 90:
+        raise Exception(a + f"; {eeee=}")
 
     return rect
 
