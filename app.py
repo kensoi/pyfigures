@@ -5,8 +5,16 @@
 import argparse
 from math import acos, pi
 from objects.figures import (
-    Point, Rectangular, Round, Triangle, Vector
+    Point, Rectangular, Round, Triangle, Vector, DIMENSIONS
 )
+
+
+def create_point():
+    return Point(*[float(input(f"Введите точку в измерении {j} >> ")) for j in range(DIMENSIONS)])
+
+
+def create_vector():
+    return Vector(create_point(), create_point())
 
 
 def create_triangle() -> Triangle:
@@ -19,11 +27,14 @@ def create_triangle() -> Triangle:
 
     for i in range(3):
         print(f"Точка №{i+1}")
-        x = int(input("Введите x для точки >> "))
-        y = int(input("Введите y для точки >> "))
-        z = int(input("Введите z для точки >> "))
+        # x = int(input("Введите x для точки >> "))
+        # y = int(input("Введите y для точки >> "))
+        # z = int(input("Введите z для точки >> "))
 
-        triangle.set_point(Point(x,y,z), i)
+        # triangle.set_point(Point(x,y,z), i)
+
+        triangle.set_point(create_point(), i)
+
 
     return triangle
 
@@ -38,11 +49,7 @@ def create_rect() -> Rectangular:
 
     for i in range(4):
         print(f"Точка №{i+1}")
-        x = int(input("Введите x для точки >> "))
-        y = int(input("Введите y для точки >> "))
-        z = int(input("Введите z для точки >> "))
-
-        rect.set_point(Point(x,y,z), i)
+        rect.set_point(create_point(), i)
         print()
 
     a = "четырёхугольник должен быть прямоугольным выпуклым!"
@@ -81,23 +88,18 @@ def create_round() -> Round:
 
     print("Создание фигуры с типом \"Окружность\"\n")
 
-    x = int(input("Введите x для точки >> "))
-    y = int(input("Введите y для точки >> "))
-    z = int(input("Введите z для точки >> "))
-
-    r = int(input("Введите радиус окружности >> "))
-    
     round_figure = Round()
-    round_figure.set_pos(Point(x, y, z))
-    round_figure.radius = r
+    round_figure.set_pos(create_point())
+    round_figure.radius = int(input("Введите радиус окружности >> "))
 
     return round_figure
 
 
 def get_vect_angle(v1: Vector, v2: Vector):
-    poss = v1.get_proj("x") * v2.get_proj("x") + v1.get_proj("y") * v2.get_proj("y") + v1.get_proj("z") * v2.get_proj("z")
-    lens = v1.get_len() * v2.get_len()
-    angle = poss / lens
+    # poss = v1.get_proj("x") * v2.get_proj("x") + v1.get_proj("y") * v2.get_proj("y") + v1.get_proj("z") * v2.get_proj("z")
+    poss = sum(map(lambda x: v1.get_proj(x) * v2.get_proj(x), [*range(DIMENSIONS)]))
+    lens = abs(v1) * abs(v2)
+    angle = poss / lens 
 
     return acos(angle) / pi * 90 * 2 // 0.0000001 / 10000000
 

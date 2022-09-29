@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from math import sqrt
+import typing
+DIMENSIONS = 4
 
 class Point:
     x: int
@@ -6,14 +9,27 @@ class Point:
     z: int
 
 
-    def __init__(self, x, y, z) -> None:
-        self.x = x
-        self.y = y
-        self.z = z
+    def __init__(self, *args) -> None:
+        self.coordinates = [*args]
+
+
+    @property
+    def x(self):
+        return self.coordinates[0]
+
+
+    @property
+    def y(self):
+        return self.coordinates[1]
+
+
+    @property
+    def z(self):
+        return self.coordinates[2]
 
 
     def __repr__(self) -> str:
-        return f"({self.x}; {self.y}; {self.z})"
+        return f"({'; '.join(map(str, self.coordinates))})"
 
 
 class Figure(ABC):
@@ -29,7 +45,13 @@ class Figure(ABC):
     def get_perimeter(self) -> int:
         """
         Получить периметр фигуры
-        """
+        """ 
+        return sum(
+            map(
+                lambda i: abs(Vector(self.points[i], self.points[(i+1) % len(len(self.points))])), 
+                [*range(len(self.points))]
+                )
+            )
 
     @abstractmethod
     def get_area(self) -> int:
@@ -43,3 +65,44 @@ class Figure(ABC):
             raise Exception("индекс должен быть в пределах [0; 3)")
 
         self.points = [new_point if i == index else self.points[i] for i in range(len(self.points))]
+
+class Vector(Figure):
+    def __init__(self, 
+            A = Point(*[0 for i in range(DIMENSIONS)]), 
+            B = Point(*[0 for i in range(DIMENSIONS)])):
+
+        self.points = [A, B]
+
+
+    def get_len(self):
+        # return (self.get_proj("x") ** 2 + self.get_proj("y") ** 2 + self.get_proj("z") ** 2) ** 0.5
+        return self.__abs__()
+
+    
+    def __abs__(self):
+        return sqrt(sum(map(lambda value: value ** 2, [self.get_proj(i) for i in range(len(self.points[0].coordinates))])))
+
+
+    def get_proj(self, index: typing.Union[int, str]):
+        if isinstance(index, str):
+            return abs(getattr(self.points[1], index) - getattr(self.points[0], index))
+            # self.points[1].x
+            # self.points[1].y
+            # self.points[1].z
+
+        else:
+            return abs(self.points[1].coordinates[index] - self.points[0].coordinates[index])
+            # для пространств с любым количеством измерений
+
+
+    def get_area(self):
+        return 0
+
+
+    def get_perimeter(self):
+        return super().get_perimeter()
+
+
+    def output(self):
+        return f"Вектор с координатами: {', '.join(map(repr, self.points))}"
+
