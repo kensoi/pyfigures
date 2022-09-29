@@ -3,123 +3,23 @@
 
 
 import argparse
-from math import acos, pi
-from objects.figures import (
-    Point, Rectangular, Round, Triangle, Vector, DIMENSIONS
-)
-
-
-def create_point():
-    return Point(*[float(input(f"Введите точку в измерении {j} >> ")) for j in range(DIMENSIONS)])
-
-
-def create_vector():
-    return Vector(create_point(), create_point())
-
-
-def create_triangle() -> Triangle:
-    """
-    Создать треугольник
-    """
-
-    print("Создание фигуры с типом \"Треугольник\"\n")
-    triangle = Triangle()
-
-    for i in range(3):
-        print(f"Точка №{i+1}")
-        # x = int(input("Введите x для точки >> "))
-        # y = int(input("Введите y для точки >> "))
-        # z = int(input("Введите z для точки >> "))
-
-        # triangle.set_point(Point(x,y,z), i)
-
-        triangle.set_point(create_point(), i)
-
-
-    return triangle
-
-
-def create_rect() -> Rectangular:
-    """
-    Создать прямоугольник
-    """
-
-    print("Создание фигуры с типом \"Прямоугольник\"\n")
-    rect = Rectangular()
-
-    for i in range(4):
-        print(f"Точка №{i+1}")
-        rect.set_point(create_point(), i)
-        print()
-
-    a = "четырёхугольник должен быть прямоугольным выпуклым!"
-    A = rect.points[0]
-    B = rect.points[1]
-    C = rect.points[2]
-    D = rect.points[3]
-
-    AB = Vector(A, B)
-    BC = Vector(B, C)
-    CD = Vector(C, D)
-    DA = Vector(D, A)
-    e = get_vect_angle(AB, BC)
-    ee = get_vect_angle(BC, CD)
-    eee = get_vect_angle(CD, DA)
-    eeee = get_vect_angle(AB, DA)
-    if e != 90:
-        raise Exception(a + f"; {e=}")
-
-    if ee != 90:
-        raise Exception(a + f"; {ee=}")
-    
-    if eee != 90:
-        raise Exception(a + f"; {eee=}")
-
-    if eeee != 90:
-        raise Exception(a + f"; {eeee=}")
-
-    return rect
-
-
-def create_round() -> Round:
-    """
-    Создать окружность
-    """
-
-    print("Создание фигуры с типом \"Окружность\"\n")
-
-    round_figure = Round()
-    round_figure.set_pos(create_point())
-    round_figure.radius = int(input("Введите радиус окружности >> "))
-
-    return round_figure
-
-
-def get_vect_angle(v1: Vector, v2: Vector):
-    # poss = v1.get_proj("x") * v2.get_proj("x") + v1.get_proj("y") * v2.get_proj("y") + v1.get_proj("z") * v2.get_proj("z")
-    poss = sum(map(lambda x: v1.get_proj(x) * v2.get_proj(x), [*range(DIMENSIONS)]))
-    lens = abs(v1) * abs(v2)
-    angle = poss / lens 
-
-    return acos(angle) / pi * 90 * 2 // 0.0000001 / 10000000
+from tools import create_circle, create_rect, create_triangle
 
 
 def main() -> None:
     """
     Главная функция
     """
+    figure_list = []
     parser = argparse.ArgumentParser(description='Парсер.')
     parser.add_argument('-o', '--output', type=str, help="Куда отправлять результат")
+    parser.add_argument('-d', '--dimensions', type=int, help="Количество измерений пространств")
+    parser.add_argument('-c', '--count', type=int, help="Количество фигур в списке")
     args = parser.parse_args()
 
     print("Создание списка фигур")
     print()
-
-    figure_count = int(input("Сколько фигур нужно в списке? >> "))
-    figure_list = []
-    print()
-
-    print("Для каждой фигуры нужно определить свой тип. Даны следующие типы:\n\t0 - Треугольник\n\t1 - Прямоугольник\n\t2 - Круг")
+    figure_count = args.count or int(input("Сколько фигур нужно в списке? >> "))
     print()
 
     for i in range(figure_count):
@@ -127,22 +27,22 @@ def main() -> None:
         cycle = True
 
         while cycle:
-            figure_type = input("Введите индекс типа фигуры >> ").lower()
+            figure_type = input("Введите тип фигуры >> ").lower()
 
             if figure_type in ["0", "треугольник"]:
-                figure = create_triangle()
+                figure = create_triangle(args.dimensions)
 
-            elif figure_type in ["1", "прямоугольник"]:
+            elif figure_type in ["1", "прямоугольник", "квадрат"]:
                 try:
-                    figure = create_rect()
+                    figure = create_rect(args.dimensions)
                     
                 except Exception as e:
                     print(e)
 
                     continue
 
-            elif figure_type in ["2", "окружность"]:
-                figure = create_round()
+            elif figure_type in ["2", "окружность", "круг"]:
+                figure = create_circle(args.dimensions)
 
             else:
                 print("Такого типа фигуры не существует! Попробуйте ещё раз!")

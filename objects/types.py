@@ -1,15 +1,16 @@
 from abc import ABC, abstractmethod
 from math import sqrt
 import typing
-DIMENSIONS = 4
 
 class Point:
-    x: int
-    y: int
-    z: int
+    x: float
+    y: float
+    z: float
+    dimensions: int
 
 
-    def __init__(self, *args) -> None:
+    def __init__(self, dimensions, *args) -> None:
+        self.dimensions = dimensions
         self.coordinates = [*args]
 
 
@@ -34,14 +35,17 @@ class Point:
 
 class Figure(ABC):
     points: list[Point]
+    dimensions: int
 
-    @abstractmethod
+
     def output(self) -> int:
         """
         Вывод фигуры
         """
 
-    @abstractmethod
+        return repr(self)
+
+
     def get_perimeter(self) -> int:
         """
         Получить периметр фигуры
@@ -52,6 +56,7 @@ class Figure(ABC):
                 [*range(len(self.points))]
                 )
             )
+
 
     @abstractmethod
     def get_area(self) -> int:
@@ -67,11 +72,11 @@ class Figure(ABC):
         self.points = [new_point if i == index else self.points[i] for i in range(len(self.points))]
 
 class Vector(Figure):
-    def __init__(self, 
-            A = Point(*[0 for i in range(DIMENSIONS)]), 
-            B = Point(*[0 for i in range(DIMENSIONS)])):
-
+    def __init__(self, dimensions = 3, A = None, B = None):
+        if not A: A = Point(*[0 for i in range(dimensions)])
+        if not B: B = Point(*[0 for i in range(dimensions)])
         self.points = [A, B]
+        self.dimensions = dimensions
 
 
     def get_len(self):
@@ -80,7 +85,7 @@ class Vector(Figure):
 
     
     def __abs__(self):
-        return sqrt(sum(map(lambda value: value ** 2, [self.get_proj(i) for i in range(len(self.points[0].coordinates))])))
+        return sqrt(sum(map(lambda value: value ** 2, [self.get_proj(i) for i in range(self.dimensions)])))
 
 
     def get_proj(self, index: typing.Union[int, str]):
@@ -103,6 +108,6 @@ class Vector(Figure):
         return super().get_perimeter()
 
 
-    def output(self):
+    def __repr__(self):
         return f"Вектор с координатами: {', '.join(map(repr, self.points))}"
 
