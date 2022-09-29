@@ -3,3 +3,8 @@
 ```bash
 python3 app.py
 ```
+
+## Запуск c выводом в файл
+```bash
+python3 app.py -o "./result.txt"
+```

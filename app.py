@@ -2,9 +2,10 @@
 # Выполнил Прокофьев Андрей Фт-210008
 
 
+import argparse
 from math import acos, pi
 from objects.figures import (
-    Point, Rectangular, Round, Triangle, Vector, get_vect_angle
+    Point, Rectangular, Round, Triangle, Vector
 )
 
 
@@ -105,6 +106,9 @@ def main() -> None:
     """
     Главная функция
     """
+    parser = argparse.ArgumentParser(description='Парсер.')
+    parser.add_argument('-o', '--output', type=str, help="Куда отправлять результат")
+    args = parser.parse_args()
 
     print("Создание списка фигур")
     print()
@@ -149,11 +153,19 @@ def main() -> None:
         print()
         
     figure_list = sorted(figure_list, key = lambda s: s.get_area())
-    print("Список отсортирован по показателям площади")
+    response = "Список отсортирован по показателям площади\nСписок фигур: \n"
 
-    print("Список фигур: ")
     for i in figure_list:
-        print(i.output())
+        response += "\t" + i.output() + "\n"
+
+    if args.output:
+        with open(args.output, "w+", encoding="utf-8") as file:
+            file.write(response)
+            print("Ваш результат записан в указанном файле:", args.output)
+
+    else:
+        print("Ваш результат:", response)
+
     return
 
 
