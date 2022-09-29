@@ -1,6 +1,8 @@
 # Лабораторная работа по ООП № 2
 # Выполнил Прокофьев Андрей Фт-210008
 
+
+from math import acos, pi
 from objects.figures import (
     Point, Rectangular, Round, Triangle, Vector, get_vect_angle
 )
@@ -89,6 +91,14 @@ def create_round() -> Round:
     round_figure.radius = r
 
     return round_figure
+
+
+def get_vect_angle(v1: Vector, v2: Vector):
+    poss = v1.get_proj("x") * v2.get_proj("x") + v1.get_proj("y") * v2.get_proj("y") + v1.get_proj("z") * v2.get_proj("z")
+    lens = v1.get_len() * v2.get_len()
+    angle = poss / lens
+
+    return acos(angle) / pi * 90 * 2 // 0.0000001 / 10000000
 
 
 def main() -> None:

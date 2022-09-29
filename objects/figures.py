@@ -1,4 +1,4 @@
-from math import acos, pi
+from math import pi
 from .types import Point, Figure
 
 
@@ -25,14 +25,6 @@ class Vector(Figure):
 
     def output(self):
         return f"Вектор с координатами: {', '.join([repr(i) for i in self.points])}"
-
-
-def get_vect_angle(v1: Vector, v2: Vector):
-    poss = v1.get_proj("x") * v2.get_proj("x") + v1.get_proj("y") * v2.get_proj("y") + v1.get_proj("z") * v2.get_proj("z")
-    lens = v1.get_len() * v2.get_len()
-    angle = poss / lens
-
-    return acos(angle) / pi * 90 * 2 // 0.0000001 / 10000000
 
 
 class Triangle(Figure):
