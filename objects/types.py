@@ -3,30 +3,13 @@ from math import sqrt
 import typing
 
 class Point:
-    x: float
-    y: float
-    z: float
     dimensions: int
+    coordinates: list[int]
 
 
-    def __init__(self, dimensions, *args) -> None:
+    def __init__(self, dimensions:int=3, *args) -> None:
         self.dimensions = dimensions
-        self.coordinates = [*args]
-
-
-    @property
-    def x(self):
-        return self.coordinates[0]
-
-
-    @property
-    def y(self):
-        return self.coordinates[1]
-
-
-    @property
-    def z(self):
-        return self.coordinates[2]
+        self.coordinates = list(map(int, args))
 
 
     def __repr__(self) -> str:
@@ -38,7 +21,7 @@ class Figure(ABC):
     dimensions: int
 
 
-    def output(self) -> int:
+    def output(self) -> str:
         """
         Вывод фигуры
         """
@@ -50,12 +33,9 @@ class Figure(ABC):
         """
         Получить периметр фигуры
         """ 
-        return sum(
-            map(
-                lambda i: abs(Vector(self.points[i], self.points[(i+1) % len(len(self.points))])), 
-                [*range(len(self.points))]
-                )
-            )
+
+        func = lambda i: abs(Vector(self.points[i], self.points[(i+1) % len(len(self.points))]))
+        return sum(map(func, [*range(len(self.points))]))
 
 
     @abstractmethod
@@ -65,49 +45,35 @@ class Figure(ABC):
         """
 
     
-    def set_point(self, new_point: Point, index = 0):
-        if index >= len(self.points) or index < 0:
-            raise Exception("индекс должен быть в пределах [0; 3)")
+    def set_point(self, new_point: Point = None, index:int = 0) -> None:
+        if index >= self.dimensions or index < 0:
+            raise Exception(f"индекс должен быть в пределах [0; {self.dimensions})")
+        
+        self.points[index] = new_point or Point(self.dimensions)
 
-        self.points = [new_point if i == index else self.points[i] for i in range(len(self.points))]
 
 class Vector(Figure):
-    def __init__(self, dimensions = 3, A = None, B = None):
-        if not A: A = Point(*[0 for i in range(dimensions)])
-        if not B: B = Point(*[0 for i in range(dimensions)])
-        self.points = [A, B]
+    def __init__(self, dimensions:int = 3, A:Point = None, B:Point = None) -> None:
+        self.points = [A or Point(*[0 for i in range(dimensions)]), B or Point(*[0 for i in range(dimensions)])]
         self.dimensions = dimensions
 
-
-    def get_len(self):
-        # return (self.get_proj("x") ** 2 + self.get_proj("y") ** 2 + self.get_proj("z") ** 2) ** 0.5
-        return self.__abs__()
-
     
-    def __abs__(self):
-        return sqrt(sum(map(lambda value: value ** 2, [self.get_proj(i) for i in range(self.dimensions)])))
+    def __abs__(self) -> float:
+        return sqrt(sum(map(lambda value: value ** 2, [self.projection(i) for i in range(self.dimensions)])))
 
 
-    def get_proj(self, index: typing.Union[int, str]):
-        if isinstance(index, str):
-            return abs(getattr(self.points[1], index) - getattr(self.points[0], index))
-            # self.points[1].x
-            # self.points[1].y
-            # self.points[1].z
-
-        else:
-            return abs(self.points[1].coordinates[index] - self.points[0].coordinates[index])
-            # для пространств с любым количеством измерений
+    def projection(self, index: typing.Union[int, str]) -> float:
+        return abs(self.points[1].coordinates[index] - self.points[0].coordinates[index])
 
 
-    def get_area(self):
+    def get_area(self) -> int:
         return 0
 
 
-    def get_perimeter(self):
+    def get_perimeter(self) -> float:
         return super().get_perimeter()
 
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Вектор с координатами: {', '.join(map(repr, self.points))}"
 
