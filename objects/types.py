@@ -34,8 +34,8 @@ class Figure(ABC):
         Получить периметр фигуры
         """ 
 
-        func = lambda i: abs(Vector(self.points[i], self.points[(i+1) % len(len(self.points))]))
-        return sum(map(func, [*range(len(self.points))]))
+        func = lambda i: abs(Vector(self.dimensions, self.points[i], self.points[(i+1) % len(self.points)]))
+        return sum(map(func, [i for i in range(len(self.points))]))
 
 
     @abstractmethod

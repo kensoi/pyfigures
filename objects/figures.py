@@ -19,7 +19,7 @@ class Triangle(Figure):
 
     def get_area(self) -> int:
         p = self.get_perimeter() / 2
-        vector_list = map(lambda i: p - abs(Vector(self.points[i], self.points[(i+1) % 3])), [*range(3)])
+        vector_list = map(lambda i: p - abs(Vector(self.dimensions, self.points[i], self.points[(i+1) % 3])), [*range(3)])
         reduced = reduce(lambda x, y: x*y, vector_list)
 
         return (p * reduced) ** 0.5 // 0.0000001 / 10000000
